@@ -1,10 +1,12 @@
 "use strict";
 require("dotenv").config();
 const express = require("express");
-const myDB = require("./connection");
+const myDB = require("mongodb");
 const fccTesting = require("./freeCodeCamp/fcctesting.js");
 const session = require("express-session");
 const passport = require("passport");
+
+const ObjectID = require("mongodb").ObjectID;
 
 const app = express();
 fccTesting(app); //For FCC testing purposes
@@ -30,7 +32,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+  myDB.findOne({ _id: new ObjectID(id) }, (err, doc) => {
     done(null, null);
   });
 });
