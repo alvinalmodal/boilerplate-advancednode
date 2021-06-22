@@ -45,11 +45,6 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("Listening on port " + PORT);
-});
-
 // Use connect method to connect to the server
 
 try {
@@ -60,7 +55,7 @@ try {
     const users = await db.collection("users");
     app.route("/").get((req, res) => {
       //Change the response to render the Pug template
-      res.render("/views/index.pug/", {
+      res.render("index", {
         title: "Connected to Database",
         message: "Please login",
       });
@@ -68,6 +63,11 @@ try {
   });
 } catch (error) {
   app.route("/").get((req, res) => {
-    res.render("/views/index.pug", { title: e, message: "Unable to login" });
+    res.render("index", { title: e, message: "Unable to login" });
   });
 }
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Listening on port " + PORT);
+});
