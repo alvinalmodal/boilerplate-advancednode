@@ -1,12 +1,20 @@
 "use strict";
 require("dotenv").config();
 const express = require("express");
-const myDB = require("mongodb");
 const fccTesting = require("./freeCodeCamp/fcctesting.js");
 const session = require("express-session");
 const passport = require("passport");
 
+// mongodb setup
+const myDB = require("mongodb").MongoClient;
+const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require("mongodb").ObjectID;
+
+// Database Name
+
+const url = `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PASSWORD}@cluster0.wqup4.mongodb.net/`;
+const client = new MongoClient(url, { useUnifiedTopology: true });
+const dbName = "freecodecamp";
 
 const app = express();
 fccTesting(app); //For FCC testing purposes
@@ -37,11 +45,29 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-app.route("/").get((req, res) => {
-  res.render("index", { title: "Hello", message: "Please login" });
-});
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Listening on port " + PORT);
 });
+
+// Use connect method to connect to the server
+
+try {
+  client.connect(async function (err) {
+    console.log("Connected successfully to server");
+
+    const db = client.db(dbName);
+    const users = await db.collection("users");
+    app.route("/").get((req, res) => {
+      //Change the response to render the Pug template
+      res.render("/views/index.pug/", {
+        title: "Connected to Database",
+        message: "Please login",
+      });
+    });
+  });
+} catch (error) {
+  app.route("/").get((req, res) => {
+    res.render("/views/index.pug", { title: e, message: "Unable to login" });
+  });
+}
