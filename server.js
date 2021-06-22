@@ -56,8 +56,13 @@ try {
 
     passport.deserializeUser((id, done) => {
       myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
-        done(doc, null);
+        done(null, doc);
       });
+    });
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log("Listening on port " + PORT);
     });
   });
 } catch (error) {
@@ -65,8 +70,3 @@ try {
     res.render("index", { title: e, message: "Unable to login" });
   });
 }
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("Listening on port " + PORT);
-});
