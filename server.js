@@ -44,8 +44,8 @@ try {
   client.connect(async function (err) {
     console.log("Connected successfully to server");
 
-    const db = client.db(dbName);
-    const users = await db.collection("users");
+    const myDataBase = await client.db(dbName).collection("users");
+
     app.route("/").get((req, res) => {
       //Change the response to render the Pug template
       res.render("index", {
@@ -55,8 +55,8 @@ try {
     });
 
     passport.deserializeUser((id, done) => {
-      users.findOne({ _id: new ObjectID(id) }, (err, doc) => {
-        done(null, null);
+      myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+        done(doc, null);
       });
     });
   });
