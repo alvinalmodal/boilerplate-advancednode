@@ -6,7 +6,6 @@ const session = require("express-session");
 const passport = require("passport");
 
 // mongodb setup
-const myDB = require("mongodb").MongoClient;
 const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require("mongodb").ObjectID;
 
@@ -39,12 +38,6 @@ passport.serializeUser((user, done) => {
   done(null, user._id);
 });
 
-passport.deserializeUser((id, done) => {
-  myDB.findOne({ _id: new ObjectID(id) }, (err, doc) => {
-    done(null, null);
-  });
-});
-
 // Use connect method to connect to the server
 
 try {
@@ -58,6 +51,12 @@ try {
       res.render("index", {
         title: "Connected to Database",
         message: "Please login",
+      });
+    });
+
+    passport.deserializeUser((id, done) => {
+      users.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+        done(null, null);
       });
     });
   });
